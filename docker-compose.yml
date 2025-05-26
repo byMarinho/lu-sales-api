@@ -1,0 +1,69 @@
+services:
+  api:
+    build: .
+    container_name: api
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    depends_on:
+      - db
+      - sentry
+      - evolution
+    volumes:
+      - .:/app
+
+  db:
+    image: postgres:15
+    container_name: db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: lu_sales
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:6
+    container_name: redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+
+  sentry:
+    image: getsentry/sentry:latest
+    container_name: sentry
+    restart: unless-stopped
+    environment:
+      SENTRY_SECRET_KEY: ${SENTRY_SECRET_KEY}
+      SENTRY_POSTGRES_HOST: db
+      SENTRY_DB_USER: postgres
+      SENTRY_DB_PASSWORD: postgres
+      SENTRY_DB_NAME: sentry
+      SENTRY_REDIS_HOST: redis
+    volumes:
+      - st_data:/var/lib/sentry/files
+    ports:
+      - "9000:9000"
+    depends_on:
+      - db
+      - redis
+
+  evolution:
+    image: atendai/evolution-api:v1.8.2
+    container_name: evolution
+    restart: unless-stopped
+    environment:
+      AUTHENTICATION_API_KEY: ${WA_AUTHENTICATION_API_KEY}
+    ports:
+      - "8080:8080"
+    volumes:
+      - ev_data:/evolution/instances
+
+volumes:
+  db_data:
+  ev_data:
+  st_data:
