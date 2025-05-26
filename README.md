@@ -1,6 +1,4 @@
-# lu-sales-api
-
-![Estrutura de Diretórios](https://raw.githubusercontent.com/byDev/lu-sales-api/main/docs/estrutura-diretorios.png)
+# Lu Estilo Vendas - API
 
 ## Visão Geral
 
