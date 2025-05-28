@@ -42,8 +42,6 @@ def upgrade():
     )
     op.create_index(op.f('ix_products_barcode'), 'products', ['barcode'], unique=True)
     op.create_index(op.f('ix_products_id'), 'products', ['id'], unique=False)
-    # Remover ENUM duplicado se existir
-    op.execute('DROP TYPE IF EXISTS accesslevel;')
     op.create_table('users',
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('name', sa.String(), nullable=False),
@@ -93,6 +91,7 @@ def downgrade():
     op.drop_index(op.f('ix_users_id'), table_name='users')
     op.drop_index(op.f('ix_users_email'), table_name='users')
     op.drop_table('users')
+    op.execute('DROP TYPE IF EXISTS accesslevel CASCADE;')
     op.drop_index(op.f('ix_products_id'), table_name='products')
     op.drop_index(op.f('ix_products_barcode'), table_name='products')
     op.drop_table('products')
