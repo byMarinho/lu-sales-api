@@ -42,6 +42,8 @@ def upgrade():
     )
     op.create_index(op.f('ix_products_barcode'), 'products', ['barcode'], unique=True)
     op.create_index(op.f('ix_products_id'), 'products', ['id'], unique=False)
+    # Remover ENUM duplicado se existir
+    op.execute('DROP TYPE IF EXISTS accesslevel;')
     op.create_table('users',
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('name', sa.String(), nullable=False),
